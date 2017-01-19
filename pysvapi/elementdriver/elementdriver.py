@@ -36,7 +36,7 @@ class ElementDriver(object):
         self.__cmd_buffer.write('\n'.encode())
         self.__logger.info('adding command %s' % cmd) 
 
-    def wait_for_api_ready(self,maxdelay=60):
+    def wait_for_api_ready(self,maxdelay=120):
         now = int(time.time())
         maxtime = now + maxdelay
 
