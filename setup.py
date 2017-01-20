@@ -1,7 +1,7 @@
 from setuptools import setup,find_packages
 
 setup(name='pysvapi',
-      version='0.1',
+      version='0.2',
       description='Sandvine Python API',
       url='http://github.com/mfmarche/pysvapi',
       author='Sandvine',

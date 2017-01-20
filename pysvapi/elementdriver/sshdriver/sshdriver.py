@@ -3,6 +3,7 @@ import paramiko
 import tempfile
 from scp import SCPClient
 from pysvapi.elementdriver import elementdriver
+import time
 
 class ElementDriverSSH(elementdriver.ElementDriver):
   def __init__(self,host,username='sandvine',private_key=None):
@@ -35,9 +36,17 @@ class ElementDriverSSH(elementdriver.ElementDriver):
 
       self.getLogger().debug(fullcmd)
 
-      self.getLogger().info('SSH committing')
-      stdin,stdout,stderr=ssh.exec_command(fullcmd,get_pty=True)
-      return stdout.read()
+      maxtime = time.time() + 60
+      while time.time() < maxtime:
+          self.getLogger().info('SSH committing')
+          stdin,stdout,stderr=ssh.exec_command(fullcmd,get_pty=True)
+          result=stdout.read()
+          if "Another user is in configuration mode" in result:
+              self.getLogger().info("already in config mode, waiting")
+              time.sleep(2)
+          else:
+             return result
+      raise Exception('CLI failed to become ready')
 
   def ops_cmd(self,cmd):
       ssh=self.ssh_connect()
