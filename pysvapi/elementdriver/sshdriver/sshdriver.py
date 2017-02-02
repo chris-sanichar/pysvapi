@@ -6,13 +6,23 @@ from pysvapi.elementdriver import elementdriver
 import time
 
 class ElementDriverSSH(elementdriver.ElementDriver):
-  def __init__(self,host,username='sandvine',private_key=None):
+  def __init__(self,host,username='sandvine',private_key=None,private_key_file=None):
         self.__private_key=None
         if private_key is not None:
             self.__private_key=self.__private_key=paramiko.RSAKey.from_private_key(StringIO(private_key))
+        elif private_key_file is not None:
+            self.__private_key=self.__private_key=paramiko.RSAKey.from_private_key_file(private_key_file)
         self.__ssh_username = username
         super(ElementDriverSSH,self).__init__(host)
 
+  def shell_cmd(self,cmd):
+      ssh=self.ssh_connect()
+      self.getLogger().debug(cmd)
+      stdin,stdout,stderr=ssh.exec_command(cmd,get_pty=True)
+      result=stdout.read()
+      self.getLogger().debug(result)
+      return result
+      
   def configuration_commit(self,cmd=None):
       tmp_file=tempfile.NamedTemporaryFile('w')
 
