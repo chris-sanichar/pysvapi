@@ -50,7 +50,7 @@ class ElementDriverSSH(elementdriver.ElementDriver):
       while time.time() < maxtime:
           self.getLogger().info('SSH committing')
           stdin,stdout,stderr=ssh.exec_command(fullcmd,get_pty=True)
-          result=stdout.read()
+          result=stdout.read().decode()
           if "Another user is in configuration mode" in result:
               self.getLogger().info("already in config mode, waiting")
               time.sleep(2)
