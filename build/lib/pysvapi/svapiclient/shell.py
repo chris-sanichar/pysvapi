@@ -22,7 +22,7 @@ def main():
     elif args.ssh:
         driver = sshdriver.ElementDriverSSH(args.host)
     else:
-        driver = localdriver.ElementDriverLocal(args.host)
+        driver = localdriver.ElementDriverLocal("127.0.0.1")
 
     logger = driver.getLogger()
     logger.setLevel(logging.DEBUG)
