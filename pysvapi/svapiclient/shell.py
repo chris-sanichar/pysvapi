@@ -13,7 +13,7 @@ def main():
     parser.add_argument("host")
     parser.add_argument("-c","--command",nargs='+',action='append',type=str)
     parser.add_argument("-r","--rest",action="store_true")
-    parser.add_argument("-z","--ssh",action="store_true")
+    parser.add_argument("-ss","--ssh",action="store_true")
     args = parser.parse_args()
 
     driver = None
@@ -35,7 +35,7 @@ def main():
         for str_cmd in cmd:
             driver.add_cmd(str_cmd)
 
-    driver.shell_cmd(args.command)
+    driver.configuration_commit()
 
 if __name__ == '__main__':
     main()
