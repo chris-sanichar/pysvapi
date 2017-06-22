@@ -25,6 +25,9 @@ class ElementDriver(object):
     def get_host(self):
         return self.__host
 
+    def shell_cmd(self,cmd):
+        pass
+
     def configuration_commit(self,cmd=None):
         pass
 
@@ -37,7 +40,7 @@ class ElementDriver(object):
         self.__logger.info('adding command %s' % cmd) 
 
     def wait_for_api_ready(self,maxdelay=240):
-        now = int(time.time())
+	now = int(time.time())
         maxtime = now + maxdelay
 
         while not self.is_api_ready():

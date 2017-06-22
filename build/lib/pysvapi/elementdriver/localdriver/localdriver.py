@@ -1,19 +1,21 @@
 from io import StringIO 
 import paramiko
+import subprocess
 import tempfile
 from scp import SCPClient
 from pysvapi.elementdriver import elementdriver
 import time
 
-class ElementDriverLocal(element.ElementDriver):
+class ElementDriverLocal(elementdriver.ElementDriver):
     
     def __init__(self,host):
         super(ElementDriverLocal,self).__init__(host)
 
     def shell_cmd(self,cmd):
-        self.getLogger().debug(cmd)
-        stdin,stdout,stderr=self.exec_command(cmd,get_pty=True)
-        result=stdout.read()
+	self.getLogger().debug(cmd)
+        process = subprocess.Popen(cmd,stdout=subprocess.PIPE,shell=True)
+        out, err = process.communicate()
+        result=out
         self.getLogger().debug(result)
         return result
 
@@ -34,8 +36,9 @@ class ElementDriverLocal(element.ElementDriver):
         maxtime = time.time() + 60
         while time.time() < maxtime:
             self.getLogger().info('committing')
-            stdin,stdout,stderr=ssh.exec_command(fullcmd,get_pty=True)
-            result=stdout.read().decode()
+	    process = subprocess.Popen(fullcmd,stdout=subprocess.PIPE,shell=True)
+	    out, err = process.communicate()
+            result=out
             if "Another user is in configuration mode" in result:
                 self.getLogger().info("already in config mode, waiting")
                 time.sleep(2)
@@ -46,8 +49,9 @@ class ElementDriverLocal(element.ElementDriver):
     def ops_cmd(self,cmd):
         fullcmd = 'sudo svcli -c '
         fullcmd +='"'+cmd+'"'
-
         self.getLogger().debug(fullcmd)
 
-        stdin,stdout,stderr=self.execute_command(cmd,get_pty=True)
-        return stdout.read()
+	self.getLogger().debug(cmd)
+        process = subprocess.Popen(fullcmd,stdout=subprocess.PIPE,shell=True)
+        out, err = process.communicate()
+        return out
